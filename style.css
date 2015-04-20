@@ -1,0 +1,37 @@
+html, body {
+	height: 100%;
+}
+#main-container {
+	min-height: 100%;
+	padding-bottom: 80px;
+}
+#user-form {
+	padding-top: 20px;
+}
+#user-form form #input-state, #user-form form #input-city {
+	margin-bottom: 15px;
+}
+
+.angular-google-map-container {
+	height: 400px;
+	margin-bottom: 20px;
+}
+#footer {
+	position: relative;
+	height: 40px;
+	margin-top: -40px;
+	clear: both;
+	background: #dce4ec;
+}
+#footer #footer-text {
+	line-height: 40px;
+}
+
+
+@media (min-width: 992px) {
+	#user-form form #input-state, #user-form form #input-city {
+		margin-bottom: 0;
+	}
+}
+
+

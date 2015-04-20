@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Geosearch</title>
+		<meta charset="utf-8">
+  		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+		<!-- Custom Stylesheet -->
+		<link rel="stylesheet" href="style.css">
+		<!-- jQuery -->
+		<script src="jquery/jquery-2.1.3.min.js"></script>
+		<!-- Bootstrap JS -->
+		<script src="bootstrap/js/bootstrap.min.js"></script>
+		<!-- Google Maps API -->
+      	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+      	<!-- AngularJS -->
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>
+		<script src="lodash.min.js"></script>
+		<script src="ng-map.min.js"></script>
+		<script type="text/javascript" src="app.js"></script>
+	</head>
+	<body ng-app="geosearch" ng-controller="areaInfo as ctrlAreaInfo">
+		<div id="main-container" class="container">
+			<!-- User Form -->
+			<div class="row" id="user-form">
+				<div class="col-xs-12">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<form name="form" novalidate>
+								<div class="col-xs-6 col-md-4 col-lg-5">
+									<label for="input-state" class="sr-only">State</label>
+									<input type="text" id="input-state" name="state" class="form-control input-lg" ng-model="ctrlAreaInfo.state" placeholder="State" required />
+								</div>
+								<div class="col-xs-6 col-md-4 col-lg-5">
+									<label for="input-city" class="sr-only">City</label>
+									<input type="text" id="input-city" class="form-control input-lg" ng-model="ctrlAreaInfo.city" placeholder="City" required />
+								</div>
+								<div class="col-xs-12 col-md-4 col-lg-2">
+									<button class="btn btn-primary btn-lg btn-block" ng-click="ctrlAreaInfo.fetchAreaInfo()">Fetch</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row" ng-show="ctrlAreaInfo.spinner">
+				<div class="col-xs-12 text-center">
+					<img src="images/spinner.gif" />
+				</div>
+			</div>
+			<!-- Fetched Data Start -->
+			<div class="row" ng-show="ctrlAreaInfo.areaInfoRan && !ctrlAreaInfo.areaInfoError">
+				<!-- Map -->
+				<div class="col-xs-12">
+					<div id="map_canvas">
+						<ui-gmap-google-map center="ctrlAreaInfo.map.center" zoom="ctrlAreaInfo.map.zoom"></ui-gmap-google-map>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-4">
+					<!-- Timezone -->
+					<div class="panel panel-default" ng-show="ctrlAreaInfo.areaInfoJSON.timezone.success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Time</h3>
+						</div>
+						<table class="table">
+							<tr>
+								<th>Timezone</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.timezone.name}}</td>
+							</tr>
+						</table>
+					</div>
+
+					<!-- Climate -->
+					<div class="panel panel-default" ng-show="ctrlAreaInfo.areaInfoJSON.climate.success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Climate</h3>
+						</div>
+						<table class="table">
+							<tr>
+								<th>Average Summer Temperature</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.climate.temp.highNormal}}&deg;</td>
+							</tr>
+							<tr>
+								<th>Record Summer Temperature</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.climate.temp.highRecord}}&deg;</td>
+							</tr>
+							<tr>
+								<th>Average Winter Temperature</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.climate.temp.lowNormal}}&deg;</td>
+							</tr>
+							<tr>
+								<th>Record Winter Temperature</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.climate.temp.lowRecord}}&deg;</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div class="col-xs-12  col-sm-12 col-md-8">
+					<!-- Geography -->
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">Geography</h3>
+						</div>
+						<table class="table">
+							<tr>
+								<th>Location</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.geo.formattedLocation}}</td>
+							</tr>
+							<tr>
+								<th>Latitude</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.geo.lat}}</td>
+							</tr>
+							<tr>
+								<th>Longitude</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.geo.lng}}</td>
+							</tr>
+						</table>
+					</div>
+
+					<!-- State -->
+					<div class="panel panel-default" ng-show="ctrlAreaInfo.areaInfoJSON.stateData.success">
+						<div class="panel-heading">
+							<h3 class="panel-title">{{ctrlAreaInfo.areaInfoJSON.geo.state}} Population</h3>
+						</div>
+						<table class="table">
+							<tr>
+								<th>Total Population</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.stateData.total | number}}</td>
+							</tr>
+							<tr>
+								<th>Population Density</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.stateData.density}} per square mile</td>
+							</tr>
+							<tr>
+								<th>Births</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.stateData.births | number}}</td>
+							</tr>
+							<tr>
+								<th>Deaths</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.stateData.deaths | number}}</td>
+							</tr>
+						</table>
+					</div>
+
+					<!-- City -->
+					<div class="panel panel-default" ng-show="ctrlAreaInfo.areaInfoJSON.cityData.success">
+						<div class="panel-heading">
+							<h3 class="panel-title">{{ctrlAreaInfo.areaInfoJSON.geo.city}} Facts</h3>
+						</div>
+						<table class="table">
+							<tr>
+								<th>Name</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.cityData.name}}</td>
+							</tr>
+							<tr>
+								<th>Total Population</th>
+								<td>{{ctrlAreaInfo.areaInfoJSON.cityData.population | number}}</td>
+							</tr>
+						</table>
+					</div>
+
+					<!-- Real Estate -->
+					<div class="panel panel-default" ng-show="ctrlAreaInfo.areaInfoJSON.realEstate.success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Real Estate</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row" ng-repeat="chartSet in ctrlAreaInfo.areaInfoJSON.realEstate.chartSets">
+								<div class="col-xs-12 col-md-6">
+									<div class="thumbnail">
+										<img ng-src="{{chartSet[0]['url']}}"/>
+										<div class="caption">
+											<h5>{{chartSet[0]['name']}}</h5>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-12 col-md-6">
+									<div class="thumbnail">
+										<img ng-src="{{chartSet[1]['url']}}"/>
+										<div class="caption">
+											<h5>{{chartSet[1]['name']}}</h5>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Errors -->
+			<div class="row" ng-show="ctrlAreaInfo.areaInfoRan && ctrlAreaInfo.areaInfoError">
+				<div id="geosearch-error" class="col-xs-12">
+					<div class="alert alert-danger alert-dismissible" role="alert">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<strong>Oops!</strong> {{ctrlAreaInfo.areaInfoError}}
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div id="footer">
+			<div id="footer-text" class="text-center">
+				Thanks for Visiting! - <a href="http://derwisz.com/">derwisz.com</a>
+			</div>
+		</div>
+	</body>
+</html>
