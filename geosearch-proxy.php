@@ -245,7 +245,7 @@ class Datasets extends Validate {
 
 	public function fetchFIPS($lat, $lng){
 		//query code for america for FIPS
-		$query_fips_json = @file_get_contents('http://census.codeforamerica.org/areas?lat='.$lat.'&lon='.$lng.'&include_geom=false&layers=place,county');
+		$query_fips_json = @file_get_contents('https://census.codeforamerica.org/areas?lat='.$lat.'&lon='.$lng.'&include_geom=false&layers=place,county');
 		$query_fips_obj = json_decode($query_fips_json); //convert json to obj
 
 		if(!empty($query_fips_obj->features)){
@@ -331,7 +331,7 @@ class Datasets extends Validate {
 	}
 
 	public function fetchStatePopulation($state_fips){
-		$response_json = @file_get_contents('http://api.census.gov/data/2014/pep/natstprc?get=POP,DENSITY,BIRTHS,DEATHS,SUMLEV&for=state:'.$state_fips.'&DATE=6&key='.self::CENSUS_KEY);
+		$response_json = @file_get_contents('https://api.census.gov/data/2014/pep/natstprc?get=POP,DENSITY,BIRTHS,DEATHS,SUMLEV&for=state:'.$state_fips.'&DATE=6&key='.self::CENSUS_KEY);
 		$response_arr = json_decode($response_json); //index [1] holds response
 
 		if($response_arr != NULL){
@@ -351,7 +351,7 @@ class Datasets extends Validate {
 	}
 
 	public function fetchCityData($fips_state, $fips_county, $fips_place){
-		$query_city_data_json = @file_get_contents('http://api.census.gov/data/2013/pep/subcty?get=NAME,POP&for=place:'.$fips_place.'&in=state:'.$fips_state.'+county:'.$fips_county.'&DATE=6&key='.self::CENSUS_KEY);
+		$query_city_data_json = @file_get_contents('https://api.census.gov/data/2013/pep/subcty?get=NAME,POP&for=place:'.$fips_place.'&in=state:'.$fips_state.'+county:'.$fips_county.'&DATE=6&key='.self::CENSUS_KEY);
 		$query_city_data_obj = json_decode($query_city_data_json);
 
 		if($query_city_data_obj != NULL){
